@@ -414,6 +414,15 @@ impl<'data, T: Sync + 'data> IntoParallelIterator for &'data [T] {
     }
 }
 
+impl<'data, T: Sync + 'data> IntoParallelRefIterator<'data> for &'data [T] {
+    type Item = &'data T;
+    type Iter = Iter<'data, T>;
+
+    fn par_iter(&'data self) -> Self::Iter {
+        (*self).into_par_iter()
+    }
+}
+
 impl<'data, T: Sync + 'data> IntoParallelIterator for &'data Vec<T> {
     type Item = &'data T;
     type Iter = Iter<'data, T>;
@@ -429,6 +438,15 @@ impl<'data, T: Send + 'data> IntoParallelIterator for &'data mut [T] {
 
     fn into_par_iter(self) -> Self::Iter {
         IterMut { slice: self }
+    }
+}
+
+impl<'data, T: Send + 'data> IntoParallelRefMutIterator<'data> for &'data mut [T] {
+    type Item = &'data mut T;
+    type Iter = IterMut<'data, T>;
+
+    fn par_iter_mut(&'data mut self) -> Self::Iter {
+        (*self).into_par_iter()
     }
 }
 
